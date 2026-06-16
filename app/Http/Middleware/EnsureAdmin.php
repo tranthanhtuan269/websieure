@@ -11,7 +11,7 @@ class EnsureAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check() || ! auth()->user()->isAdmin()) {
-            abort(403);
+            abort(403, 'Bạn không có quyền truy cập khu vực quản trị.');
         }
 
         return $next($request);

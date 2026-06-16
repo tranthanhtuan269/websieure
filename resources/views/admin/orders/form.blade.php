@@ -8,6 +8,10 @@
     <p><strong>Theme:</strong> {{ $order->theme?->name }}</p>
     <p><strong>Khách:</strong> {{ $order->customer_name }} — {{ $order->customer_email }} — {{ $order->customer_phone }}</p>
     <p><strong>Số tiền:</strong> {{ number_format($order->amount, 0, ',', '.') }} ₫</p>
+    <p><strong>Affiliate:</strong> {{ $order->referrer?->name ?? 'Không có' }} @if($order->referrer)({{ $order->referrer->email }})@endif</p>
+    @if($order->commission)
+        <p><strong>Hoa hồng:</strong> {{ number_format($order->commission->commission_amount, 0, ',', '.') }} ₫ — {{ $order->commission->statusLabel() }}</p>
+    @endif
 </div>
 <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="form-card" style="max-width:520px;">
     @csrf @method('PUT')

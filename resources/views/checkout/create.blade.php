@@ -13,12 +13,12 @@
                 @csrf
                 <div class="form-group">
                     <label for="customer_name">Họ tên *</label>
-                    <input type="text" id="customer_name" name="customer_name" value="{{ old('customer_name') }}" required>
+                    <input type="text" id="customer_name" name="customer_name" value="{{ old('customer_name', $user?->name) }}" required>
                     @error('customer_name')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="form-group">
                     <label for="customer_email">Email *</label>
-                    <input type="email" id="customer_email" name="customer_email" value="{{ old('customer_email') }}" required>
+                    <input type="email" id="customer_email" name="customer_email" value="{{ old('customer_email', $user?->email) }}" required>
                     @error('customer_email')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="form-group">

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\Theme;
 use App\Models\User;
@@ -17,7 +18,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'password' => config('site.admin_password'),
-                'is_admin' => true,
+                'role' => UserRole::Admin,
             ]
         );
 

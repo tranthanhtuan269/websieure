@@ -10,6 +10,8 @@
     <div class="stat-card"><strong>{{ $stats['orders'] }}</strong> Đơn hàng</div>
     <div class="stat-card"><strong>{{ $stats['pending_orders'] }}</strong> Chờ TT</div>
     <div class="stat-card"><strong>{{ number_format($stats['revenue'], 0, ',', '.') }} ₫</strong> Doanh thu</div>
+    <div class="stat-card"><strong>{{ number_format($stats['commissions'], 0, ',', '.') }} ₫</strong> Hoa hồng</div>
+    <div class="stat-card"><strong>{{ $stats['pending_payouts'] }}</strong> Rút tiền chờ</div>
 </div>
 
 <h2 style="margin-bottom:.75rem;">Đơn hàng gần đây</h2>

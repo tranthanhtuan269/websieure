@@ -15,6 +15,9 @@
         <a href="{{ route('admin.categories.index') }}" @class(['active' => request()->routeIs('admin.categories.*')])>Chủ đề</a>
         <a href="{{ route('admin.themes.index') }}" @class(['active' => request()->routeIs('admin.themes.*')])>Themes</a>
         <a href="{{ route('admin.orders.index') }}" @class(['active' => request()->routeIs('admin.orders.*')])>Đơn hàng</a>
+        <a href="{{ route('admin.affiliates.index') }}" @class(['active' => request()->routeIs('admin.affiliates.*')])>Affiliate</a>
+        <a href="{{ route('admin.commissions.index') }}" @class(['active' => request()->routeIs('admin.commissions.*')])>Hoa hồng</a>
+        <a href="{{ route('admin.payouts.index') }}" @class(['active' => request()->routeIs('admin.payouts.*')])>Rút tiền</a>
         <hr style="border-color:#374151;margin:1rem 0;">
         <a href="{{ route('home') }}">← Về website</a>
         <form action="{{ route('logout') }}" method="POST" style="margin-top:.5rem;">
