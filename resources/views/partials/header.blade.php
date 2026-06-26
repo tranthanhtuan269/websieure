@@ -1,6 +1,6 @@
 <header class="site-header">
     <nav class="navbar navbar-expand-lg">
-        <div class="container header-inner">
+        <div class="container">
             <a href="{{ route('home') }}" class="navbar-brand brand">
                 <span class="brand-icon">WS</span>
                 <span>
@@ -11,7 +11,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Mở menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="siteNav">
+            <div class="collapse navbar-collapse justify-content-end" id="siteNav">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item">
                         <a href="{{ route('home') }}" @class(['nav-link', 'active' => request()->routeIs('home')])>Trang chủ</a>
