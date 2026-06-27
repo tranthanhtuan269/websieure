@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProvisioningController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\Account\AffiliateController as AccountAffiliateController;
 use App\Http\Controllers\Account\DashboardController as AccountDashboardController;
@@ -26,6 +27,10 @@ Route::get('/chu-de/{category}', [CategoryController::class, 'show'])->name('cat
 Route::get('/themes/{theme}/mua', [CheckoutController::class, 'create'])->name('checkout.create');
 Route::post('/themes/{theme}/mua', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/dat-hang/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::get('/kich-hoat/{order}/{token}', [ProvisioningController::class, 'show'])->name('provisioning.show');
+Route::get('/kich-hoat/{order}/{token}/trang-thai', [ProvisioningController::class, 'poll'])->name('provisioning.poll');
+Route::post('/kich-hoat/{order}/{token}/thu-lai', [ProvisioningController::class, 'retry'])->name('provisioning.retry');
 
 Route::redirect('/admin/login', '/dang-nhap');
 
@@ -53,6 +58,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}/edit', [AdminOrderController::class, 'edit'])->name('orders.edit');
     Route::put('orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
+    Route::post('orders/{order}/provision', [AdminOrderController::class, 'provision'])->name('orders.provision');
     Route::get('affiliates', [AdminAffiliateController::class, 'index'])->name('affiliates.index');
     Route::put('affiliates/settings', [AdminAffiliateController::class, 'updateSettings'])->name('affiliates.settings');
     Route::get('commissions', [AdminAffiliateController::class, 'commissions'])->name('commissions.index');
