@@ -12,7 +12,7 @@ return [
     'run_local' => env('PROVISIONING_RUN_LOCAL', false),
 
     'ssh' => [
-        'host' => env('PROVISIONING_SSH_HOST', '127.0.0.1'),
+        'host' => env('PROVISIONING_SSH_HOST', '178.104.222.35'),
         'user' => env('PROVISIONING_SSH_USER', 'root'),
         'port' => (int) env('PROVISIONING_SSH_PORT', 22),
         'key' => env('PROVISIONING_SSH_KEY'),

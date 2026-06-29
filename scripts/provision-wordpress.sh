@@ -5,13 +5,15 @@ DOMAIN="${1:?domain required}"
 ADMIN_EMAIL="${2:?admin email required}"
 SITES_PATH="${3:-/var/www}"
 SERVER_IP="${4:-}"
+SITE_FOLDER="${5:-${SITE_FOLDER:-}}"
 
 DB_NAME="wp_$(echo "$DOMAIN" | tr '.-' '__' | cut -c1-48)"
 DB_USER="${DB_NAME}_u"
 DB_PASS="$(openssl rand -base64 24 | tr -dc 'a-zA-Z0-9' | head -c 24)"
 WP_ADMIN_USER="${WP_ADMIN_USER:-admin}"
 WP_ADMIN_PASS="$(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c 16)"
-SITE_DIR="${SITES_PATH}/${DOMAIN}"
+SITE_DIR="${SITES_PATH}/${SITE_FOLDER:-$DOMAIN}"
+NGINX_SITE="${DOMAIN}"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -49,11 +51,11 @@ fi
 
 PHP_SOCK=$(ls /run/php/php*-fpm.sock 2>/dev/null | head -1)
 
-cat > "/etc/nginx/sites-available/${DOMAIN}" <<NGINX
+cat > "/etc/nginx/sites-available/${NGINX_SITE}" <<NGINX
 server {
     listen 80;
     listen [::]:80;
-    server_name ${DOMAIN} www.${DOMAIN};
+    server_name ${DOMAIN};
     root ${SITE_DIR};
     index index.php index.html;
 
@@ -71,12 +73,12 @@ server {
 }
 NGINX
 
-ln -sf "/etc/nginx/sites-available/${DOMAIN}" "/etc/nginx/sites-enabled/${DOMAIN}"
+ln -sf "/etc/nginx/sites-available/${NGINX_SITE}" "/etc/nginx/sites-enabled/${NGINX_SITE}"
 nginx -t
 systemctl reload nginx
 
 if command -v certbot >/dev/null 2>&1; then
-  certbot --nginx -d "$DOMAIN" -d "www.${DOMAIN}" --non-interactive --agree-tos \
+  certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos \
     --email "$ADMIN_EMAIL" --redirect 2>/dev/null || true
 fi
 

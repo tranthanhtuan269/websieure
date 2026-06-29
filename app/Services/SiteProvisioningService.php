@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ProvisioningStatus;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
@@ -20,7 +21,7 @@ class SiteProvisioningService
         }
 
         $order->update([
-            'provisioning_status' => \App\Enums\ProvisioningStatus::Queued->value,
+            'provisioning_status' => ProvisioningStatus::Queued->value,
             'provisioning_started_at' => now(),
             'provisioning_completed_at' => null,
             'provisioning_error' => null,
@@ -30,11 +31,16 @@ class SiteProvisioningService
         $this->log($order, 'Bắt đầu cài đặt website cho '.$domain);
 
         $zoneId = $this->configureDns($order, $domain);
-        $credentials = $this->installWordPress($order, $domain);
+        $credentials = $this->installWordPress($order->customer_email, $domain, null, function (string $message) use ($order): void {
+            if ($order->fresh()?->provisioning_status !== ProvisioningStatus::InstallingWordpress->value) {
+                $order->update(['provisioning_status' => ProvisioningStatus::InstallingWordpress->value]);
+            }
+            $this->log($order, $message);
+        });
         $this->configureSsl($order, $domain);
 
         $order->update([
-            'provisioning_status' => \App\Enums\ProvisioningStatus::Completed->value,
+            'provisioning_status' => ProvisioningStatus::Completed->value,
             'provisioning_completed_at' => now(),
             'site_url' => $credentials['site_url'],
             'wp_admin_user' => $credentials['wp_admin_user'],
@@ -47,9 +53,69 @@ class SiteProvisioningService
         $this->log($order, 'Hoàn tất! Website đã sẵn sàng tại '.$credentials['site_url']);
     }
 
+    /**
+     * @param  callable(string): void|null  $logger
+     * @return array{site_url: string, site_dir: string, wp_admin_user: string, wp_admin_password: string}
+     */
+    public function provisionStandalone(
+        string $domain,
+        string $adminEmail,
+        ?string $siteFolder = null,
+        bool $configureDns = true,
+        ?callable $logger = null,
+    ): array {
+        $domain = $this->normalizeDomain($domain);
+        $log = $logger ?? static function (): void {};
+
+        if ($domain === '') {
+            throw new \InvalidArgumentException('Domain is required.');
+        }
+
+        $log('Bắt đầu cài đặt website cho '.$domain);
+
+        if ($configureDns) {
+            $this->configureDnsStandalone($domain, $log);
+        } else {
+            $log('Bỏ qua DNS — hãy trỏ domain về IP '.config('provisioning.server_ip'));
+        }
+
+        $credentials = $this->installWordPress($adminEmail, $domain, $siteFolder, $log);
+        $log('HTTPS được cấu hình qua Let\'s Encrypt (nếu certbot có sẵn).');
+        $log('Hoàn tất! Website đã sẵn sàng tại '.$credentials['site_url']);
+
+        return $credentials;
+    }
+
+    private function configureDnsStandalone(string $domain, callable $log): ?string
+    {
+        $log('Đang cấu hình DNS qua Cloudflare...');
+
+        if (! $this->cloudflare->isEnabled()) {
+            $log('Cloudflare chưa bật — bỏ qua DNS tự động. Hãy trỏ domain về IP '.config('provisioning.server_ip'));
+
+            return null;
+        }
+
+        $zone = $this->cloudflare->ensureZone($domain);
+        $this->cloudflare->pointDomainToServer(
+            $zone['zone_id'],
+            $domain,
+            config('provisioning.server_ip'),
+        );
+
+        $nameservers = $this->cloudflare->nameservers($zone['zone_id']);
+        if ($zone['created'] && $nameservers !== []) {
+            $log('Zone mới — cập nhật nameserver tại nhà đăng ký: '.implode(', ', $nameservers));
+        } else {
+            $log('DNS A record đã trỏ '.$domain.' về '.config('provisioning.server_ip').' (zone '.$zone['zone_name'].')');
+        }
+
+        return $zone['zone_id'];
+    }
+
     private function configureDns(Order $order, string $domain): ?string
     {
-        $order->update(['provisioning_status' => \App\Enums\ProvisioningStatus::ConfiguringDns->value]);
+        $order->update(['provisioning_status' => ProvisioningStatus::ConfiguringDns->value]);
         $this->log($order, 'Đang cấu hình DNS qua Cloudflare...');
 
         if (! $this->cloudflare->isEnabled()) {
@@ -76,25 +142,31 @@ class SiteProvisioningService
     }
 
     /**
-     * @return array{site_url: string, wp_admin_user: string, wp_admin_password: string}
+     * @return array{site_url: string, site_dir: string, wp_admin_user: string, wp_admin_password: string}
      */
-    private function installWordPress(Order $order, string $domain): array
-    {
-        $order->update(['provisioning_status' => \App\Enums\ProvisioningStatus::InstallingWordpress->value]);
-        $this->log($order, 'Đang cài đặt WordPress...');
+    private function installWordPress(
+        string $adminEmail,
+        string $domain,
+        ?string $siteFolder = null,
+        ?callable $logger = null,
+    ): array {
+        $log = $logger ?? static function (): void {};
+        $log('Đang cài đặt WordPress...');
 
         $script = base_path('scripts/provision-wordpress.sh');
         $sitesPath = config('provisioning.sites_path');
         $serverIp = config('provisioning.server_ip');
         $adminUser = config('provisioning.wordpress.admin_user');
+        $folder = $siteFolder ?: $domain;
 
         $command = sprintf(
-            'bash %s %s %s %s %s',
+            'bash %s %s %s %s %s %s',
             escapeshellarg($script),
             escapeshellarg($domain),
-            escapeshellarg($order->customer_email),
+            escapeshellarg($adminEmail),
             escapeshellarg($sitesPath),
             escapeshellarg($serverIp),
+            escapeshellarg($folder),
         );
 
         $env = ['WP_ADMIN_USER' => $adminUser];
@@ -105,14 +177,15 @@ class SiteProvisioningService
         }
 
         $parsed = $this->parseProvisionOutput($output);
-        $this->log($order, 'WordPress đã cài xong tại '.$parsed['site_url']);
+        $parsed['site_dir'] = rtrim($sitesPath, '/').'/'.$folder;
+        $log('WordPress đã cài xong tại '.$parsed['site_url']);
 
         return $parsed;
     }
 
     private function configureSsl(Order $order, string $domain): void
     {
-        $order->update(['provisioning_status' => \App\Enums\ProvisioningStatus::ConfiguringSsl->value]);
+        $order->update(['provisioning_status' => ProvisioningStatus::ConfiguringSsl->value]);
         $this->log($order, 'HTTPS đã được cấu hình trong quá trình cài WordPress (Let\'s Encrypt).');
     }
 
@@ -131,10 +204,17 @@ class SiteProvisioningService
             return $result->output();
         }
 
-        $ssh = config('provisioning.ssh');
         $sshCommand = $this->buildSshCommand($command);
+        $sshEnv = $env;
 
-        $result = Process::timeout(600)->run($sshCommand);
+        if (! config('provisioning.ssh.key') && ! config('provisioning.ssh.password')) {
+            $agentSocket = getenv('SSH_AUTH_SOCK') ?: '/run/host-services/ssh-auth.sock';
+            if (is_string($agentSocket) && $agentSocket !== '' && file_exists($agentSocket)) {
+                $sshEnv['SSH_AUTH_SOCK'] = $agentSocket;
+            }
+        }
+
+        $result = Process::timeout(600)->env($sshEnv)->run($sshCommand);
 
         if (! $result->successful()) {
             Log::error('SSH provisioning failed', [
@@ -154,8 +234,10 @@ class SiteProvisioningService
         $host = $ssh['host'];
         $port = $ssh['port'];
 
+        $batchMode = $ssh['password'] ? '' : ' -o BatchMode=yes';
         $options = sprintf(
-            '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p %d',
+            '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null%s -p %d',
+            $batchMode,
             $port,
         );
 

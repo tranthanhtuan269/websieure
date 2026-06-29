@@ -17,17 +17,18 @@ class CloudflareService
     }
 
     /**
-     * @return array{zone_id: string, created: bool}
+     * @return array{zone_id: string, created: bool, zone_name: string}
      */
     public function ensureZone(string $domain): array
     {
-        $existing = $this->findZone($domain);
+        $zoneName = $this->resolveZoneName($domain);
+        $existing = $this->findZone($zoneName);
         if ($existing) {
-            return ['zone_id' => $existing, 'created' => false];
+            return ['zone_id' => $existing, 'created' => false, 'zone_name' => $zoneName];
         }
 
         $response = $this->request('POST', '/zones', [
-            'name' => $domain,
+            'name' => $zoneName,
             'account' => ['id' => config('provisioning.cloudflare.account_id')],
             'type' => 'full',
         ]);
@@ -35,13 +36,33 @@ class CloudflareService
         return [
             'zone_id' => $response['result']['id'],
             'created' => true,
+            'zone_name' => $zoneName,
         ];
     }
 
     public function pointDomainToServer(string $zoneId, string $domain, string $ip): void
     {
         $this->upsertDnsRecord($zoneId, 'A', $domain, $ip, proxied: true);
-        $this->upsertDnsRecord($zoneId, 'A', 'www.'.$domain, $ip, proxied: true);
+    }
+
+    public function resolveZoneName(string $domain): string
+    {
+        $domain = strtolower(trim($domain));
+
+        if ($this->findZone($domain)) {
+            return $domain;
+        }
+
+        $parts = explode('.', $domain);
+        while (count($parts) > 2) {
+            array_shift($parts);
+            $candidate = implode('.', $parts);
+            if ($this->findZone($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return $domain;
     }
 
     /**
