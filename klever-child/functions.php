@@ -16,13 +16,13 @@ add_action('wp_enqueue_scripts', function (): void {
         'klever-child',
         get_stylesheet_directory_uri().'/assets/css/klever.css',
         [$parent],
-        '1.0.0'
+        '1.1.0'
     );
     wp_enqueue_script(
         'klever-child',
         get_stylesheet_directory_uri().'/assets/js/klever.js',
-        [],
-        '1.0.0',
+        ['jquery'],
+        '1.1.0',
         true
     );
 }, 20);

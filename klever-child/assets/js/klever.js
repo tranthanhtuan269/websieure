@@ -59,9 +59,88 @@
     }, 5000);
   }
 
+  function initCouponCopy() {
+    document.querySelectorAll('.klever-coupon__copy').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var code = btn.getAttribute('data-code');
+        if (!code) return;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code);
+        } else {
+          var tmp = document.createElement('input');
+          tmp.value = code;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand('copy');
+          document.body.removeChild(tmp);
+        }
+        btn.textContent = 'ĐÃ SAO CHÉP!';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = 'SAO CHÉP MÃ';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  }
+
+  function initGiftTabs() {
+    var tabs = document.querySelectorAll('.klever-gifts__tab');
+    var panels = document.querySelectorAll('.klever-gifts__panel');
+    if (!tabs.length) return;
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var id = tab.getAttribute('data-tab');
+        tabs.forEach(function (t) { t.classList.remove('klever-gifts__tab--active'); });
+        panels.forEach(function (p) {
+          p.classList.toggle('klever-gifts__panel--active', p.getAttribute('data-panel') === id);
+        });
+        tab.classList.add('klever-gifts__tab--active');
+      });
+    });
+  }
+
+  function initStoryCarousel() {
+    var track = document.getElementById('klever-story-track');
+    var prev = document.getElementById('klever-story-prev');
+    var next = document.getElementById('klever-story-next');
+    if (!track) return;
+
+    var scrollAmount = 272;
+
+    if (prev) {
+      prev.addEventListener('click', function () {
+        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+    }
+    if (next) {
+      next.addEventListener('click', function () {
+        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+    }
+  }
+
+  function initScrollTop() {
+    var btn = document.getElementById('klever-scroll-top');
+    if (!btn) return;
+
+    window.addEventListener('scroll', function () {
+      btn.classList.toggle('visible', window.scrollY > 300);
+    });
+
+    btn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initCountdown();
     initDrawer();
     initHeroSlider();
+    initCouponCopy();
+    initGiftTabs();
+    initStoryCarousel();
+    initScrollTop();
   });
 })();
