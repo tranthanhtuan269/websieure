@@ -8,12 +8,12 @@
     <thead>
         <tr>
             <th>Mã</th>
+            <th>Gói</th>
             <th>Theme</th>
-            <th>Khách</th>
-            <th>Affiliate</th>
+            <th>Khách / Domain</th>
             <th>Số tiền</th>
-            <th>Hoa hồng</th>
-            <th>TT</th>
+            <th>TT đơn</th>
+            <th>Cài đặt</th>
             <th></th>
         </tr>
     </thead>
@@ -21,18 +21,22 @@
         @foreach($orders as $order)
         <tr>
             <td>{{ $order->order_code }}</td>
+            <td>{{ $order->packageLabel() }}</td>
             <td>{{ $order->theme?->name }}</td>
-            <td>{{ $order->customer_name }}<br><small>{{ $order->customer_email }}</small></td>
-            <td>{{ $order->referrer?->name ?? '—' }}</td>
-            <td>{{ number_format($order->amount, 0, ',', '.') }} ₫</td>
             <td>
-                @if($order->commission)
-                    {{ number_format($order->commission->commission_amount, 0, ',', '.') }} ₫
+                {{ $order->customer_name }}<br>
+                <small>{{ $order->customer_email }}</small>
+                @if($order->domain)<br><small>{{ $order->domain }}</small>@endif
+            </td>
+            <td>{{ number_format($order->amount, 0, ',', '.') }} ₫</td>
+            <td>{{ $order->statusLabel() }}</td>
+            <td>
+                @if($order->isFullPackage())
+                    {{ $order->provisioningStatusEnum()?->label() ?? '—' }}
                 @else
                     —
                 @endif
             </td>
-            <td>{{ $order->statusLabel() }}</td>
             <td><a href="{{ route('admin.orders.edit', $order) }}" class="btn btn-outline btn-sm">Sửa</a></td>
         </tr>
         @endforeach

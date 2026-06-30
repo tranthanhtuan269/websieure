@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "klever-purple", "color": "#3b2d7a", "name": "Klever Purple" },
+        { "slug": "klever-purple-dark", "color": "#2a1f5c", "name": "Klever Purple Dark" },
+        { "slug": "klever-red", "color": "#e31e24", "name": "Klever Red" },
+        { "slug": "klever-red-dark", "color": "#c41218", "name": "Klever Red Dark" },
+        { "slug": "klever-bg", "color": "#f5f5f7", "name": "Background" },
+        { "slug": "klever-text", "color": "#1a1a2e", "name": "Text" },
+        { "slug": "klever-muted", "color": "#888899", "name": "Muted" }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          "name": "Be Vietnam Pro",
+          "slug": "be-vietnam"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "480px",
+      "wideSize": "480px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var(--wp--preset--color--klever-bg)",
+      "text": "var(--wp--preset--color--klever-text)"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--be-vietnam)",
+      "fontSize": "14px"
+    }
+  }
+}
