@@ -2,6 +2,8 @@
 
 defined('ABSPATH') || exit;
 
+require_once get_stylesheet_directory().'/inc/helpers.php';
+
 add_action('after_setup_theme', function (): void {
     add_theme_support('woocommerce');
     add_theme_support('wc-product-gallery-zoom');
@@ -16,13 +18,13 @@ add_action('wp_enqueue_scripts', function (): void {
         'klever-child',
         get_stylesheet_directory_uri().'/assets/css/klever.css',
         [$parent],
-        '1.1.0'
+        '1.2.0'
     );
     wp_enqueue_script(
         'klever-child',
         get_stylesheet_directory_uri().'/assets/js/klever.js',
         ['jquery'],
-        '1.1.0',
+        '1.2.0',
         true
     );
 }, 20);

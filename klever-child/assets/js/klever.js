@@ -1,146 +1,107 @@
 (function () {
   'use strict';
 
-  function initCountdown() {
-    var el = document.getElementById('klever-countdown');
-    if (!el) return;
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
 
-    var end = new Date();
-    end.setDate(end.getDate() + 5);
-    end.setHours(23, 59, 59, 0);
+  /* Hero slider */
+  function initHero() {
+    var slides = document.querySelectorAll('.kf-hero__slide');
+    var dots = document.querySelectorAll('.kf-hero__dot');
+    if (!slides.length) return;
 
-    function pad(n) { return n < 10 ? '0' + n : String(n); }
-
-    function tick() {
-      var now = new Date();
-      var diff = Math.max(0, end - now);
-      var days = Math.floor(diff / 86400000);
-      var hours = Math.floor((diff % 86400000) / 3600000);
-      var mins = Math.floor((diff % 3600000) / 60000);
-      var secs = Math.floor((diff % 60000) / 1000);
-
-      el.querySelector('[data-days]').textContent = days;
-      el.querySelector('[data-hours]').textContent = pad(hours);
-      el.querySelector('[data-mins]').textContent = pad(mins);
-      el.querySelector('[data-secs]').textContent = pad(secs);
+    var cur = 0;
+    function go(i) {
+      slides[cur].classList.remove('kf-hero__slide--active');
+      if (dots[cur]) dots[cur].classList.remove('kf-hero__dot--active');
+      cur = i;
+      slides[cur].classList.add('kf-hero__slide--active');
+      if (dots[cur]) dots[cur].classList.add('kf-hero__dot--active');
     }
 
+    dots.forEach(function (d) {
+      d.addEventListener('click', function () { go(parseInt(d.getAttribute('data-i'), 10)); });
+    });
+
+    setInterval(function () { go((cur + 1) % slides.length); }, 5000);
+  }
+
+  /* Countdown */
+  function initCountdown() {
+    var el = document.getElementById('kf-countdown');
+    if (!el) return;
+    var end = new Date();
+    end.setHours(23, 59, 59, 0);
+
+    function tick() {
+      var diff = Math.max(0, end - new Date());
+      el.querySelector('[data-h]').textContent = pad(Math.floor(diff / 3600000));
+      el.querySelector('[data-m]').textContent = pad(Math.floor((diff % 3600000) / 60000));
+      el.querySelector('[data-s]').textContent = pad(Math.floor((diff % 60000) / 1000));
+    }
     tick();
     setInterval(tick, 1000);
   }
 
-  function initDrawer() {
-    var drawer = document.getElementById('klever-drawer');
-    var openBtn = document.getElementById('klever-menu-btn');
-    var closeBtn = document.getElementById('klever-drawer-close');
-    if (!drawer || !openBtn) return;
+  /* Tabs */
+  function initTabs() {
+    document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
+      var btns = wrap.querySelectorAll('.kf-tabs__btn');
+      var section = wrap.closest('.kf-split-section') || wrap.parentElement;
+      if (!section) return;
+      var panels = section.querySelectorAll('.kf-tab-panel');
 
-    openBtn.addEventListener('click', function () { drawer.classList.add('open'); });
-    if (closeBtn) closeBtn.addEventListener('click', function () { drawer.classList.remove('open'); });
-    drawer.addEventListener('click', function (e) {
-      if (e.target === drawer) drawer.classList.remove('open');
-    });
-  }
-
-  function initHeroSlider() {
-    var slides = document.querySelectorAll('.klever-hero__slide');
-    var dots = document.querySelectorAll('.klever-hero__dot');
-    if (slides.length < 2) return;
-
-    var current = 0;
-    slides.forEach(function (s, i) { s.style.display = i === 0 ? 'block' : 'none'; });
-
-    setInterval(function () {
-      slides[current].style.display = 'none';
-      if (dots[current]) dots[current].classList.remove('klever-hero__dot--active');
-      current = (current + 1) % slides.length;
-      slides[current].style.display = 'block';
-      if (dots[current]) dots[current].classList.add('klever-hero__dot--active');
-    }, 5000);
-  }
-
-  function initCouponCopy() {
-    document.querySelectorAll('.klever-coupon__copy').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var code = btn.getAttribute('data-code');
-        if (!code) return;
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(code);
-        } else {
-          var tmp = document.createElement('input');
-          tmp.value = code;
-          document.body.appendChild(tmp);
-          tmp.select();
-          document.execCommand('copy');
-          document.body.removeChild(tmp);
-        }
-        btn.textContent = 'ĐÃ SAO CHÉP!';
-        btn.classList.add('copied');
-        setTimeout(function () {
-          btn.textContent = 'SAO CHÉP MÃ';
-          btn.classList.remove('copied');
-        }, 2000);
-      });
-    });
-  }
-
-  function initGiftTabs() {
-    var tabs = document.querySelectorAll('.klever-gifts__tab');
-    var panels = document.querySelectorAll('.klever-gifts__panel');
-    if (!tabs.length) return;
-
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        var id = tab.getAttribute('data-tab');
-        tabs.forEach(function (t) { t.classList.remove('klever-gifts__tab--active'); });
-        panels.forEach(function (p) {
-          p.classList.toggle('klever-gifts__panel--active', p.getAttribute('data-panel') === id);
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tab = btn.getAttribute('data-tab');
+          btns.forEach(function (b) { b.classList.remove('kf-tabs__btn--active'); });
+          btn.classList.add('kf-tabs__btn--active');
+          if (!tab) return;
+          panels.forEach(function (p) {
+            p.classList.toggle('kf-tab-panel--active', p.getAttribute('data-panel') === tab);
+          });
         });
-        tab.classList.add('klever-gifts__tab--active');
       });
     });
   }
 
-  function initStoryCarousel() {
-    var track = document.getElementById('klever-story-track');
-    var prev = document.getElementById('klever-story-prev');
-    var next = document.getElementById('klever-story-next');
-    if (!track) return;
-
-    var scrollAmount = 272;
-
-    if (prev) {
-      prev.addEventListener('click', function () {
-        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  /* Carousels */
+  function initCarousels() {
+    document.querySelectorAll('.kf-carousel__arrow').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-target');
+        var track = document.getElementById(id);
+        if (!track) return;
+        var amount = track.offsetWidth * 0.7;
+        track.scrollBy({ left: btn.classList.contains('kf-carousel__arrow--prev') ? -amount : amount, behavior: 'smooth' });
       });
-    }
-    if (next) {
-      next.addEventListener('click', function () {
-        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      });
-    }
+    });
   }
 
+  /* Drawer */
+  function initDrawer() {
+    var drawer = document.getElementById('kf-drawer');
+    var open = document.getElementById('kf-menu-btn');
+    var close = document.getElementById('kf-drawer-close');
+    if (!drawer || !open) return;
+    open.addEventListener('click', function () { drawer.classList.add('open'); });
+    if (close) close.addEventListener('click', function () { drawer.classList.remove('open'); });
+    drawer.addEventListener('click', function (e) { if (e.target === drawer) drawer.classList.remove('open'); });
+  }
+
+  /* Scroll top */
   function initScrollTop() {
-    var btn = document.getElementById('klever-scroll-top');
+    var btn = document.getElementById('kf-scroll-top');
     if (!btn) return;
-
-    window.addEventListener('scroll', function () {
-      btn.classList.toggle('visible', window.scrollY > 300);
-    });
-
-    btn.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    window.addEventListener('scroll', function () { btn.classList.toggle('visible', window.scrollY > 400); });
+    btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    initHero();
     initCountdown();
+    initTabs();
+    initCarousels();
     initDrawer();
-    initHeroSlider();
-    initCouponCopy();
-    initGiftTabs();
-    initStoryCarousel();
     initScrollTop();
   });
 })();
