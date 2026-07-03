@@ -10,15 +10,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role', 20)->default(UserRole::User->value)->after('password');
-        });
+        if (! Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('role', 20)->default(UserRole::User->value)->after('password');
+            });
+        }
 
-        DB::table('users')->where('is_admin', true)->update(['role' => UserRole::Admin->value]);
+        if (Schema::hasColumn('users', 'is_admin')) {
+            DB::table('users')->where('is_admin', true)->update(['role' => UserRole::Admin->value]);
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_admin');
-        });
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('is_admin');
+            });
+        }
     }
 
     public function down(): void
