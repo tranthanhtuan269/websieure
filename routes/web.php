@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\Account\AffiliateController as AccountAffiliateController;
 use App\Http\Controllers\Account\DashboardController as AccountDashboardController;
@@ -14,8 +15,11 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PayoutRequestController;
+use App\Http\Controllers\Admin\LandingPageController as AdminLandingPageController;
 use App\Http\Controllers\Admin\ThemeController as AdminThemeController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/lp/{landingPage}', [LandingPageController::class, 'show'])->name('landing-pages.show');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
@@ -50,6 +54,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
     Route::resource('themes', AdminThemeController::class)->except(['show']);
+    Route::resource('landing-pages', AdminLandingPageController::class)->except(['show']);
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}/edit', [AdminOrderController::class, 'edit'])->name('orders.edit');
     Route::put('orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');

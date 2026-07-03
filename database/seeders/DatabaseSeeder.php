@@ -104,5 +104,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        $this->call(LandingPageSeeder::class);
     }
 }

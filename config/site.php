@@ -7,6 +7,6 @@ return [
     'contact_email' => env('SITE_CONTACT_EMAIL', 'contact@websieure.test'),
     'contact_phone' => env('SITE_CONTACT_PHONE', '0900 000 000'),
     'currency' => 'VND',
-    'admin_email' => env('ADMIN_EMAIL', 'admin@websieure.test'),
-    'admin_password' => env('ADMIN_PASSWORD', 'password'),
+    'admin_email' => env('ADMIN_EMAIL', 'admin@lamwebre.com'),
+    'admin_password' => env('ADMIN_PASSWORD', 'lamwebre.com@'),
 ];
