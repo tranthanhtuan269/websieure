@@ -51,13 +51,13 @@
   Chu de          /chu-de
   Admin           /admin/login
 
-  Tai khoan admin (sau khi seed):
-    Email:    admin@websieure.test
-    Mat khau: password
+  Tai khoan admin (sau khi seed hoac chay php artisan admin:ensure):
+    Email:    admin@lamwebre.com
+    Mat khau: lamwebre.com@
 
   Doi trong .env:
-    ADMIN_EMAIL=...
-    ADMIN_PASSWORD=...
+    ADMIN_EMAIL=admin@lamwebre.com
+    ADMIN_PASSWORD=lamwebre.com@
 
 --------------------------------------------------------------------------------
 4. CHUC NANG
