@@ -135,7 +135,6 @@ class LandingPageContentService
             'title' => 'Cookie Settings',
             'message' => "We use cookies to improve your experience and show relevant offers for {$niche} services. By continuing, you agree to our cookie policy and personalized content.",
             'button_text' => 'Yes, I accept',
-            'decline_text' => 'Manage preferences',
         ];
     }
 

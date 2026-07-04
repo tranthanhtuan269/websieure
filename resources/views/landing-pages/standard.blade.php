@@ -2,10 +2,7 @@
 
 @section('content')
 <article class="lp-standard">
-    <header class="lp-hero">
-        @if($page->hero_image)
-            <img src="{{ $page->hero_image }}" alt="{{ $page->title }}" class="lp-hero__img">
-        @endif
+    <header class="lp-hero lp-hero--text">
         <div class="lp-hero__overlay">
             <div class="lp-container">
                 <h1>{{ $page->title }}</h1>
@@ -27,17 +24,17 @@
 
     @foreach($page->sections ?? [] as $index => $section)
     <section class="lp-section {{ $index % 2 === 1 ? 'lp-section--alt' : '' }}">
-        <div class="lp-container lp-section__grid">
+        <div class="lp-container lp-section__grid {{ $index % 2 === 1 ? 'lp-section__grid--reverse' : '' }}">
+            <figure class="lp-section__media">
+                <img src="{{ $section['image'] ?? 'assets/images/image-' . ($index + 1) . '.jpg' }}"
+                     alt="{{ $section['title'] ?? $page->title }}"
+                     loading="lazy">
+            </figure>
             <div class="lp-prose">
                 <h2>{{ $section['title'] ?? 'Phần ' . ($index + 1) }}</h2>
                 {!! nl2br(e($section['content'] ?? '')) !!}
                 <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta lp-cta--inline">Nhận tư vấn miễn phí</a>
             </div>
-            @if(!empty($section['image']))
-            <figure class="lp-section__media">
-                <img src="{{ $section['image'] }}" alt="{{ $section['title'] ?? $page->title }}" loading="lazy">
-            </figure>
-            @endif
         </div>
     </section>
     @endforeach

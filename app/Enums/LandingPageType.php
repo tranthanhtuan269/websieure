@@ -11,9 +11,9 @@ enum LandingPageType: string
     public function label(): string
     {
         return match ($this) {
-            self::Standard => 'Chuẩn 3 phần (~3000 từ)',
-            self::Popup => 'Popup chấp nhận',
-            self::Scroll => 'Cuộn đơn giản (~1000 từ)',
+            self::Standard => 'Chuẩn ~3000 từ (3 ảnh + CTA)',
+            self::Popup => 'Popup Cookie Notice (1 ảnh)',
+            self::Scroll => 'So sánh đối thủ + CTA',
         };
     }
 }

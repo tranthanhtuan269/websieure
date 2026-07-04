@@ -5,21 +5,27 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\LandingPageType;
 use App\Http\Controllers\Controller;
 use App\Models\LandingPage;
+use App\Services\LandingPageExportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LandingPageController extends Controller
 {
-    public function index(): View
+    public function index(LandingPageExportService $exporter): View
     {
         $pages = LandingPage::query()
             ->orderBy('type')
             ->orderBy('title')
             ->paginate(30);
 
-        return view('admin.landing-pages.index', compact('pages'));
+        $exportZip = $exporter->exportZipPath();
+        $exportReady = File::exists($exportZip);
+
+        return view('admin.landing-pages.index', compact('pages', 'exportReady', 'exportZip'));
     }
 
     public function create(): View
@@ -59,6 +65,28 @@ class LandingPageController extends Controller
         return redirect()->route('admin.landing-pages.index')->with('success', 'Đã xóa landing page.');
     }
 
+    public function exportPackage(LandingPageExportService $exporter): RedirectResponse
+    {
+        $result = $exporter->export();
+
+        return redirect()
+            ->route('admin.landing-pages.index')
+            ->with('success', "Đã tạo gói {$result['count']} landing page HTML. Bạn có thể tải file zip ngay.");
+    }
+
+    public function downloadExport(LandingPageExportService $exporter): BinaryFileResponse|RedirectResponse
+    {
+        $zipPath = $exporter->exportZipPath();
+
+        if (! File::exists($zipPath)) {
+            return redirect()
+                ->route('admin.landing-pages.index')
+                ->with('error', 'Chưa có file zip. Hãy bấm "Tạo gói export" trước.');
+        }
+
+        return response()->download($zipPath, 'lamwebre-landing-pages.zip');
+    }
+
     private function validated(Request $request, ?LandingPage $page = null): array
     {
         $data = $request->validate([
@@ -74,7 +102,6 @@ class LandingPageController extends Controller
             'popup_title' => ['nullable', 'string', 'max:255'],
             'popup_message' => ['nullable', 'string'],
             'popup_button_text' => ['nullable', 'string', 'max:100'],
-            'popup_decline_text' => ['nullable', 'string', 'max:100'],
             'is_active' => ['boolean'],
         ]);
 
@@ -94,11 +121,10 @@ class LandingPageController extends Controller
                 'title' => $data['popup_title'] ?? 'Cookie Settings',
                 'message' => $data['popup_message'] ?? '',
                 'button_text' => $data['popup_button_text'] ?? 'Yes, I accept',
-                'decline_text' => $data['popup_decline_text'] ?? 'Manage preferences',
             ];
         }
 
-        unset($data['popup_title'], $data['popup_message'], $data['popup_button_text'], $data['popup_decline_text']);
+        unset($data['popup_title'], $data['popup_message'], $data['popup_button_text']);
 
         return $data;
     }

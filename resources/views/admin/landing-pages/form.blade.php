@@ -35,10 +35,7 @@
         <legend>Popup settings</legend>
         <div class="form-group"><label>Tiêu đề popup</label><input name="popup_title" value="{{ old('popup_title', $popup['title'] ?? 'Cookie Settings') }}"></div>
         <div class="form-group"><label>Nội dung popup</label><textarea name="popup_message" rows="3">{{ old('popup_message', $popup['message'] ?? '') }}</textarea></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div class="form-group"><label>Nút chấp nhận</label><input name="popup_button_text" value="{{ old('popup_button_text', $popup['button_text'] ?? 'Yes, I accept') }}"></div>
-            <div class="form-group"><label>Nút từ chối</label><input name="popup_decline_text" value="{{ old('popup_decline_text', $popup['decline_text'] ?? 'Manage preferences') }}"></div>
-        </div>
+        <div class="form-group"><label>Nút chấp nhận</label><input name="popup_button_text" value="{{ old('popup_button_text', $popup['button_text'] ?? 'Yes, I accept') }}"></div>
     </fieldset>
 
     <label><input type="checkbox" name="is_active" value="1" @checked(old('is_active', $page->is_active ?? true))> Hiển thị</label>
