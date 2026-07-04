@@ -79,7 +79,6 @@ class LandingPagePackExportService
             File::put($pageDir.'/index.html', $html);
         }
 
-        File::deleteDirectory($directory.'/_source');
         File::deleteDirectory($directory.'/assets');
 
         $this->createZip($directory, $zipPath);
@@ -196,6 +195,125 @@ Upload lên hosting:
   4. Truy cập: https://domain.com/
 
 TXT;
+    }
+
+    /**
+     * @return array{view: string, data: array<string, mixed>}|null
+     */
+    public function buildPreviewViewData(LandingPageGeneration $generation, string $type): ?array
+    {
+        $allowed = ['standard', 'compare', 'popup'];
+        if (! in_array($type, $allowed, true)) {
+            return null;
+        }
+
+        $packData = $generation->pack_data ?? [];
+        $pageData = $packData[$type] ?? [];
+
+        if ($pageData === []) {
+            return null;
+        }
+
+        $pageData = $this->mapPreviewImages($pageData, $generation);
+        $affiliateUrl = $generation->affiliate_url;
+
+        $landingType = match ($type) {
+            'standard' => LandingPageType::Standard,
+            'compare' => LandingPageType::Scroll,
+            'popup' => LandingPageType::Popup,
+        };
+
+        $page = $this->toLandingPage($pageData, $landingType, $affiliateUrl);
+        $view = match ($landingType) {
+            LandingPageType::Standard => 'landing-pages.standard',
+            LandingPageType::Popup => 'landing-pages.popup',
+            LandingPageType::Scroll => 'landing-pages.compare',
+        };
+
+        $viewData = [
+            'page' => $page,
+            'affiliateUrl' => $affiliateUrl,
+        ];
+
+        if ($type === 'compare') {
+            $viewData['compare'] = $pageData['compare'] ?? [];
+        }
+
+        return ['view' => $view, 'data' => $viewData];
+    }
+
+    public function previewImagePath(LandingPageGeneration $generation, string $filename): ?string
+    {
+        if (! preg_match('/^[a-zA-Z0-9._-]+$/', $filename)) {
+            return null;
+        }
+
+        $path = $this->sourceImagesDirectory($generation->id).'/'.$filename;
+
+        return File::exists($path) ? $path : null;
+    }
+
+    /**
+     * @return list<array{type: string, label: string, url: string}>
+     */
+    public function previewLinks(LandingPageGeneration $generation): array
+    {
+        $packData = $generation->pack_data ?? [];
+        $links = [];
+
+        $types = [
+            'standard' => 'Landing chuẩn ~3000 từ (3 ảnh)',
+            'compare' => 'Bảng so sánh đối thủ',
+            'popup' => 'Landing popup Cookie Notice',
+        ];
+
+        foreach ($types as $type => $label) {
+            if (empty($packData[$type])) {
+                continue;
+            }
+
+            $links[] = [
+                'type' => $type,
+                'label' => $label,
+                'url' => route('admin.landing-pages.generator.preview', [$generation, $type]),
+            ];
+        }
+
+        return $links;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function mapPreviewImages(array $data, LandingPageGeneration $generation): array
+    {
+        if (! empty($data['hero_image'])) {
+            $data['hero_image'] = $this->previewImageUrl($generation, $data['hero_image']) ?? $data['hero_image'];
+        }
+
+        foreach ($data['sections'] ?? [] as $index => $section) {
+            if (! empty($section['image'])) {
+                $data['sections'][$index]['image'] = $this->previewImageUrl($generation, $section['image']) ?? $section['image'];
+            }
+        }
+
+        return $data;
+    }
+
+    private function previewImageUrl(LandingPageGeneration $generation, ?string $relativePath): ?string
+    {
+        if (! $relativePath || ! str_starts_with($relativePath, 'assets/images/')) {
+            return null;
+        }
+
+        $filename = basename($relativePath);
+
+        if (! $this->previewImagePath($generation, $filename)) {
+            return null;
+        }
+
+        return route('admin.landing-pages.generator.preview.image', [$generation, $filename]);
     }
 
     private function toLandingPage(array $data, LandingPageType $type, string $affiliateUrl): LandingPage

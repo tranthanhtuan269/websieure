@@ -47,6 +47,10 @@
         <p id="progressMessage" style="margin:.85rem 0 0;color:var(--muted);font-size:.92rem;"></p>
         <p id="progressTopic" style="margin:.35rem 0 0;font-size:.9rem;" hidden></p>
         <p id="progressError" style="margin:.75rem 0 0;color:#dc2626;font-size:.9rem;" hidden></p>
+        <div id="previewWrap" style="margin-top:1rem;" hidden>
+            <p style="margin:0 0 .65rem;font-weight:600;">Xem trước trước khi tải:</p>
+            <ul id="previewLinks" style="margin:0;padding-left:1.25rem;line-height:1.9;"></ul>
+        </div>
         <div id="downloadWrap" style="margin-top:1rem;" hidden>
             <a href="#" id="downloadBtn" class="btn btn-primary">Tải zip (3 landing page)</a>
         </div>
@@ -65,6 +69,8 @@
     const error = document.getElementById('progressError');
     const downloadWrap = document.getElementById('downloadWrap');
     const downloadBtn = document.getElementById('downloadBtn');
+    const previewWrap = document.getElementById('previewWrap');
+    const previewLinks = document.getElementById('previewLinks');
     const startBtn = document.getElementById('startBtn');
 
     const stepLabels = {
@@ -94,10 +100,16 @@
             return;
         }
         if (data.download_url) {
+            if (Array.isArray(data.preview_links) && data.preview_links.length) {
+                previewWrap.hidden = false;
+                previewLinks.innerHTML = data.preview_links.map(function (link) {
+                    return '<li><a href="' + link.url + '" target="_blank" rel="noopener">' + link.label + '</a></li>';
+                }).join('');
+            }
             downloadWrap.hidden = false;
             downloadBtn.href = data.download_url;
             startBtn.disabled = false;
-            message.textContent = 'Đã tạo xong gói 3 landing page. Bấm tải zip để mang lên hosting.';
+            message.textContent = 'Đã tạo xong gói 3 landing page. Xem trước từng trang bên dưới, sau đó tải zip khi hài lòng.';
         }
     }
 
@@ -122,6 +134,8 @@
         panel.hidden = false;
         error.hidden = true;
         downloadWrap.hidden = true;
+        previewWrap.hidden = true;
+        previewLinks.innerHTML = '';
         topic.hidden = true;
         bar.style.width = '0%';
         percent.textContent = '0%';

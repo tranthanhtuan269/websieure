@@ -81,6 +81,30 @@ class LandingPageGeneratorController extends Controller
         );
     }
 
+    public function preview(LandingPageGeneration $generation, string $type): View|RedirectResponse
+    {
+        $preview = $this->exportService->buildPreviewViewData($generation, $type);
+
+        if ($preview === null) {
+            return redirect()
+                ->route('admin.landing-pages.generator')
+                ->with('error', 'Không tìm thấy landing page để xem trước.');
+        }
+
+        return view($preview['view'], $preview['data']);
+    }
+
+    public function previewImage(LandingPageGeneration $generation, string $filename): BinaryFileResponse|RedirectResponse
+    {
+        $path = $this->exportService->previewImagePath($generation, $filename);
+
+        if ($path === null) {
+            abort(404);
+        }
+
+        return response()->file($path);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -106,6 +130,9 @@ class LandingPageGeneratorController extends Controller
             'download_url' => $generation->isCompleted()
                 ? route('admin.landing-pages.generator.download', $generation)
                 : null,
+            'preview_links' => $generation->isCompleted()
+                ? $this->exportService->previewLinks($generation)
+                : [],
             'topic' => $generation->topic,
         ];
     }
