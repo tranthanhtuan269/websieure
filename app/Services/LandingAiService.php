@@ -19,19 +19,25 @@ class LandingAiService
     public function generateStandard(array $context, int $wordTarget = 3000): array
     {
         $prompt = <<<PROMPT
-Viết nội dung landing page tiếng Việt cho sản phẩm/dịch vụ sau:
-- Tiêu đề trang đích: {$context['title']}
-- Mô tả: {$context['description']}
-- Link affiliate: {$context['affiliate_url']}
-- Chủ đề: {$context['topic']}
+Write landing page copy in {$this->languageLabel()} for this product/service:
+- Source page title: {$context['title']}
+- Description: {$context['description']}
+- Affiliate URL: {$context['affiliate_url']}
+- Topic: {$context['topic']}
 
-Yêu cầu:
-- Tổng cộng khoảng {$wordTarget} từ (intro + 3 section)
-- 3 section, mỗi section có title và content dài (~900-1000 từ/section)
-- Giọng văn thuyết phục, SEO, có lợi ích rõ ràng
-- Không dùng HTML, chỉ plain text, xuống dòng bằng \\n\\n giữa đoạn
+Style requirements (US direct-response marketing):
+- American English spelling and idioms (color, optimize, center)
+- Speak to the reader with "you" and "your"
+- Benefit-led, confident, clear — like a top US SaaS or DTC landing page
+- Short, punchy section titles; persuasive but not hypey
+- SEO-friendly without keyword stuffing
 
-Trả về JSON:
+Content requirements:
+- Roughly {$wordTarget} words total (intro + 3 sections)
+- 3 sections, each with a title and long-form content (~900-1000 words per section)
+- Plain text only — no HTML. Separate paragraphs with \\n\\n
+
+Return JSON:
 {
   "title": "...",
   "meta_description": "...",
@@ -52,7 +58,7 @@ PROMPT;
             'intro' => $this->ensureWordCount($result['intro'] ?? '', (int) round($wordTarget * 0.15), $context),
             'sections' => collect($result['sections'] ?? [])->take(3)->map(function ($section, $i) use ($wordTarget, $context) {
                 return [
-                    'title' => $section['title'] ?? 'Phần '.($i + 1),
+                    'title' => $section['title'] ?? 'Section '.($i + 1),
                     'content' => $this->ensureWordCount($section['content'] ?? '', (int) round($wordTarget * 0.28), $context),
                 ];
             })->values()->all(),
@@ -63,8 +69,8 @@ PROMPT;
     {
         return [
             'title' => 'Cookie Notice',
-            'message' => 'This website uses cookies to personalize content and ads, provide social media features, and analyze our traffic. By clicking Accept, you agree to the use of cookies. For more information, visit our',
-            'button_text' => 'Accept and Continue',
+            'message' => 'We use cookies to personalize content and ads, provide social media features, and analyze site traffic. By clicking Accept, you agree to our use of cookies. Learn more in our',
+            'button_text' => 'Accept & Continue',
             'policy_url' => $context['affiliate_url'] ?? null,
         ];
     }
@@ -75,28 +81,31 @@ PROMPT;
     public function generateCompare(array $context): array
     {
         $prompt = <<<PROMPT
-Tạo bảng so sánh sản phẩm vs đối thủ (tiếng Việt) cho:
-- Sản phẩm: {$context['title']}
-- Mô tả: {$context['description']}
-- Link: {$context['affiliate_url']}
+Create a US-style product comparison landing page in {$this->languageLabel()} for:
+- Product: {$context['title']}
+- Description: {$context['description']}
+- Affiliate URL: {$context['affiliate_url']}
 
-Trả JSON:
+Write like a modern American comparison page (clear headline, confident positioning, conversion-focused CTA).
+Use American English spelling and tone.
+
+Return JSON:
 {
-  "title": "So sánh ...",
+  "title": "How ... Compares",
   "meta_description": "...",
-  "product_name": "tên sản phẩm ngắn",
-  "competitor_name": "Đối thủ / Giải pháp truyền thống",
-  "intro": "1-2 câu giới thiệu",
-  "summary": "1 đoạn kết luận ngắn",
+  "product_name": "short product name",
+  "competitor_name": "Traditional alternative / Other options",
+  "intro": "1-2 sentence hook",
+  "summary": "short closing paragraph",
   "cta_title": "...",
   "cta_text": "...",
   "cta_button": "...",
   "rows": [
-    {"feature": "Tính năng 1", "ours": true, "theirs": false},
-    ... 8-12 dòng
+    {"feature": "Feature name", "ours": true, "theirs": false},
+    ... 8-12 rows
   ]
 }
-ours/theirs là boolean (true= có, false= không).
+ours/theirs are booleans (true = has feature, false = does not).
 PROMPT;
 
         $result = $this->callAi($prompt);
@@ -106,15 +115,15 @@ PROMPT;
         }
 
         return [
-            'title' => $result['title'] ?? 'So sánh '.$context['title'],
+            'title' => $result['title'] ?? $this->compareTitle($context['title']),
             'meta_description' => $result['meta_description'] ?? Str::limit($context['description'], 160),
             'product_name' => $result['product_name'] ?? $context['title'],
-            'competitor_name' => $result['competitor_name'] ?? 'Giải pháp khác',
+            'competitor_name' => $result['competitor_name'] ?? 'Traditional alternatives',
             'intro' => $result['intro'] ?? '',
             'summary' => $result['summary'] ?? '',
-            'cta_title' => $result['cta_title'] ?? 'Chọn giải pháp tốt hơn',
-            'cta_text' => $result['cta_text'] ?? 'Đăng ký ngay để nhận ưu đãi.',
-            'cta_button' => $result['cta_button'] ?? 'Nhận ưu đãi ngay →',
+            'cta_title' => $result['cta_title'] ?? 'Ready to make the switch?',
+            'cta_text' => $result['cta_text'] ?? 'See why thousands of customers choose us over the competition.',
+            'cta_button' => $result['cta_button'] ?? 'Get started today →',
             'rows' => collect($result['rows'] ?? [])->take(12)->map(fn ($row) => [
                 'feature' => $row['feature'] ?? '',
                 'ours' => (bool) ($row['ours'] ?? false),
@@ -154,7 +163,7 @@ PROMPT;
             }
         }
 
-        throw $lastError ?? new \RuntimeException('Không có model Gemini khả dụng.');
+        throw $lastError ?? new \RuntimeException('No Gemini model available.');
     }
 
     /**
@@ -166,12 +175,19 @@ PROMPT;
         $baseUrl = rtrim(config('landing.ai.base_url'), '/');
         $url = "{$baseUrl}/models/{$model}:generateContent?key={$apiKey}";
 
+        $system = <<<SYSTEM
+You are a senior US direct-response copywriter who writes high-converting landing pages for American audiences.
+Always write in American English (en-US): conversational, benefit-driven, confident, and clear.
+Use American spelling. Avoid British phrasing. Never use Vietnamese.
+Always return valid JSON only — no markdown fences or commentary.
+SYSTEM;
+
         $response = Http::timeout(120)->post($url, [
             'contents' => [
                 [
                     'parts' => [
                         [
-                            'text' => "Bạn là copywriter landing page chuyên nghiệp. Luôn trả về JSON hợp lệ, không bọc markdown.\n\n".$prompt,
+                            'text' => $system."\n\n".$prompt,
                         ],
                     ],
                 ],
@@ -183,7 +199,7 @@ PROMPT;
         ]);
 
         if (! $response->successful()) {
-            throw new \RuntimeException('Gemini API lỗi ('.$model.'): '.$response->body());
+            throw new \RuntimeException('Gemini API error ('.$model.'): '.$response->body());
         }
 
         $content = $response->json('candidates.0.content.parts.0.text', '');
@@ -235,7 +251,7 @@ PROMPT;
     private function fallbackParagraph(array $context, int $target): string
     {
         $content = new LandingPageContentService;
-        $topic = $context['topic'] ?? 'dịch vụ';
+        $topic = $context['topic'] ?? 'your business';
 
         return $content->sectionContent($topic, $context['title'], 0);
     }
@@ -263,7 +279,7 @@ PROMPT;
 
         return [
             'title' => $context['title'],
-            'meta_description' => Str::limit($context['description'] ?: "Giải pháp {$topic} chuyên nghiệp", 160),
+            'meta_description' => Str::limit($context['description'] ?: "Professional {$topic} solution built to convert", 160),
             'intro' => $content->intro($niche, $topic),
             'sections' => collect($content->standardSections(Str::slug($topic), $niche, $topic))
                 ->map(fn ($s) => ['title' => $s['title'], 'content' => $s['content']])
@@ -279,27 +295,37 @@ PROMPT;
         $product = $context['title'];
 
         return [
-            'title' => 'So sánh '.$product.' với giải pháp khác',
-            'meta_description' => Str::limit($context['description'] ?: "So sánh tính năng {$product}", 160),
+            'title' => $this->compareTitle($product),
+            'meta_description' => Str::limit($context['description'] ?: "See how {$product} stacks up against the competition", 160),
             'product_name' => $product,
-            'competitor_name' => 'Giải pháp truyền thống',
-            'intro' => 'Xem nhanh vì sao '.$product.' vượt trội so với các lựa chọn phổ biến trên thị trường.',
-            'summary' => $product.' mang lại trải nghiệm toàn diện hơn, tiết kiệm chi phí và thời gian triển khai.',
-            'cta_title' => 'Sẵn sàng trải nghiệm?',
-            'cta_text' => 'Nhấn nút bên dưới để xem chi tiết và nhận ưu đãi.',
-            'cta_button' => 'Xem ưu đãi ngay →',
+            'competitor_name' => 'Traditional alternatives',
+            'intro' => "Here's a side-by-side look at why {$product} is the smarter pick for most buyers.",
+            'summary' => "{$product} delivers more value, faster setup, and lower long-term cost than outdated alternatives.",
+            'cta_title' => 'Ready to get started?',
+            'cta_text' => 'Tap below to see pricing, details, and today\'s offer.',
+            'cta_button' => 'See the offer →',
             'rows' => [
-                ['feature' => 'Triển khai nhanh trong 24–48h', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Tối ưu SEO sẵn có', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Responsive mobile/tablet', 'ours' => true, 'theirs' => true],
-                ['feature' => 'Hỗ trợ kỹ thuật sau bàn giao', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Tùy chỉnh logo & màu thương hiệu', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Tích hợp form liên hệ / chat', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Chi phí một lần, sở hữu website', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Cập nhật nội dung dễ dàng', 'ours' => true, 'theirs' => false],
-                ['feature' => 'Phí thuê bao hàng tháng', 'ours' => false, 'theirs' => true],
-                ['feature' => 'Giới hạn tính năng theo gói', 'ours' => false, 'theirs' => true],
+                ['feature' => 'Launch in 24–48 hours', 'ours' => true, 'theirs' => false],
+                ['feature' => 'SEO-ready out of the box', 'ours' => true, 'theirs' => false],
+                ['feature' => 'Mobile & tablet optimized', 'ours' => true, 'theirs' => true],
+                ['feature' => 'Post-launch support included', 'ours' => true, 'theirs' => false],
+                ['feature' => 'Custom branding (logo & colors)', 'ours' => true, 'theirs' => false],
+                ['feature' => 'Contact forms & live chat ready', 'ours' => true, 'theirs' => false],
+                ['feature' => 'One-time purchase — you own it', 'ours' => true, 'theirs' => false],
+                ['feature' => 'Easy content updates', 'ours' => true, 'theirs' => false],
+                ['feature' => 'Monthly subscription fees', 'ours' => false, 'theirs' => true],
+                ['feature' => 'Feature limits by pricing tier', 'ours' => false, 'theirs' => true],
             ],
         ];
+    }
+
+    private function compareTitle(string $product): string
+    {
+        return "{$product} vs. the competition";
+    }
+
+    private function languageLabel(): string
+    {
+        return config('landing.content.language', 'American English');
     }
 }

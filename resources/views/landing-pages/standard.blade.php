@@ -9,7 +9,7 @@
                 @if($page->intro)
                     <p class="lp-lead">{{ \Illuminate\Support\Str::limit(strip_tags($page->intro), 220) }}</p>
                 @endif
-                <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">Xem giải pháp ngay</a>
+                <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">See it in action</a>
             </div>
         </div>
     </header>
@@ -31,9 +31,9 @@
                      loading="lazy">
             </figure>
             <div class="lp-prose">
-                <h2>{{ $section['title'] ?? 'Phần ' . ($index + 1) }}</h2>
+                <h2>{{ $section['title'] ?? 'Section ' . ($index + 1) }}</h2>
                 {!! nl2br(e($section['content'] ?? '')) !!}
-                <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta lp-cta--inline">Nhận tư vấn miễn phí</a>
+                <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta lp-cta--inline">Get a free consultation</a>
             </div>
         </div>
     </section>
@@ -41,9 +41,9 @@
 
     <footer class="lp-footer">
         <div class="lp-container">
-            <h2>Sẵn sàng bắt đầu?</h2>
-            <p>Chọn theme phù hợp và triển khai website chuyên nghiệp trong 24 giờ.</p>
-            <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">Đến trang mua theme →</a>
+            <h2>Ready to get started?</h2>
+            <p>Pick the right theme and launch a professional site in 24 hours.</p>
+            <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">Shop themes now →</a>
         </div>
     </footer>
 </article>

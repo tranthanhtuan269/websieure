@@ -18,4 +18,8 @@ return [
     'crawler' => [
         'verify_ssl' => env('LANDING_CRAWLER_VERIFY_SSL', env('APP_ENV') === 'production'),
     ],
+    'content' => [
+        'locale' => env('LANDING_CONTENT_LOCALE', 'en-US'),
+        'language' => env('LANDING_CONTENT_LANGUAGE', 'American English'),
+    ],
 ];

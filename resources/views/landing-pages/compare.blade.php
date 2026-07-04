@@ -4,7 +4,7 @@
 @php
     $compare = $compare ?? [];
     $productName = $compare['product_name'] ?? $page->title;
-    $competitorName = $compare['competitor_name'] ?? 'Giải pháp khác';
+    $competitorName = $compare['competitor_name'] ?? 'Other options';
     $rows = $compare['rows'] ?? [];
 @endphp
 <article class="lp-compare">
@@ -27,7 +27,7 @@
             <table class="lp-compare__table">
                 <thead>
                     <tr>
-                        <th>Tính năng</th>
+                        <th>Feature</th>
                         <th class="lp-compare__col-ours">{{ $productName }}</th>
                         <th class="lp-compare__col-theirs">{{ $competitorName }}</th>
                     </tr>
@@ -41,7 +41,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3">Đang cập nhật bảng so sánh...</td>
+                        <td colspan="3">Comparison table coming soon...</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -55,9 +55,9 @@
         @endif
 
         <div class="lp-compare__cta">
-            <h2>{{ $compare['cta_title'] ?? 'Chọn giải pháp tốt hơn ngay hôm nay' }}</h2>
-            <p>{{ $compare['cta_text'] ?? 'Đăng ký trải nghiệm và nhận ưu đãi dành riêng cho bạn.' }}</p>
-            <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">{{ $compare['cta_button'] ?? 'Nhận ưu đãi ngay →' }}</a>
+            <h2>{{ $compare['cta_title'] ?? 'Choose the better option today' }}</h2>
+            <p>{{ $compare['cta_text'] ?? 'Sign up now and claim your exclusive offer.' }}</p>
+            <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">{{ $compare['cta_button'] ?? 'Claim your offer →' }}</a>
         </div>
     </div>
 </article>

@@ -21,7 +21,7 @@
         </div>
 
         <div class="lp-scroll__cta">
-            <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">Xem theme phù hợp →</a>
+            <a href="{{ $affiliateUrl }}" class="btn btn-primary lp-cta">Find your perfect theme →</a>
         </div>
     </div>
 </article>

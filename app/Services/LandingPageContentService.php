@@ -6,16 +6,16 @@ class LandingPageContentService
 {
     /** @var list<array{slug: string, title: string, niche: string, keyword: string}> */
     private array $topics = [
-        ['slug' => 'website-spa', 'title' => 'Website Spa Chuyên Nghiệp Giá Rẻ', 'niche' => 'spa và làm đẹp', 'keyword' => 'website spa'],
-        ['slug' => 'website-nha-hang', 'title' => 'Website Nhà Hàng Đặt Bàn Online', 'niche' => 'nhà hàng và ẩm thực', 'keyword' => 'website nhà hàng'],
-        ['slug' => 'website-bat-dong-san', 'title' => 'Website Bất Động Sản Bán Hàng Hiệu Quả', 'niche' => 'bất động sản', 'keyword' => 'website bất động sản'],
-        ['slug' => 'website-ban-hang-online', 'title' => 'Website Bán Hàng Online Toàn Diện', 'niche' => 'thương mại điện tử', 'keyword' => 'website bán hàng'],
-        ['slug' => 'website-giao-duc', 'title' => 'Website Trung Tâm Giáo Dục Hiện Đại', 'niche' => 'giáo dục và đào tạo', 'keyword' => 'website giáo dục'],
-        ['slug' => 'landing-page-marketing', 'title' => 'Landing Page Marketing Chuyển Đổi Cao', 'niche' => 'digital marketing', 'keyword' => 'landing page marketing'],
-        ['slug' => 'website-nha-khoa', 'title' => 'Website Nha Khoa Uy Tín Thu Hút Khách', 'niche' => 'nha khoa và y tế', 'keyword' => 'website nha khoa'],
-        ['slug' => 'website-gym-fitness', 'title' => 'Website Phòng Gym Fitness Chuyên Nghiệp', 'niche' => 'gym và fitness', 'keyword' => 'website gym'],
-        ['slug' => 'website-luat-su', 'title' => 'Website Văn Phòng Luật Sư Chuyên Nghiệp', 'niche' => 'dịch vụ pháp lý', 'keyword' => 'website luật sư'],
-        ['slug' => 'website-khach-san', 'title' => 'Website Khách Sạn Resort Đặt Phòng Online', 'niche' => 'khách sạn và du lịch', 'keyword' => 'website khách sạn'],
+        ['slug' => 'spa-website', 'title' => 'Professional Spa Website — Affordable & Fast', 'niche' => 'spa and beauty', 'keyword' => 'spa website'],
+        ['slug' => 'restaurant-website', 'title' => 'Restaurant Website with Online Reservations', 'niche' => 'restaurants and food service', 'keyword' => 'restaurant website'],
+        ['slug' => 'real-estate-website', 'title' => 'Real Estate Website That Closes More Deals', 'niche' => 'real estate', 'keyword' => 'real estate website'],
+        ['slug' => 'ecommerce-website', 'title' => 'Complete Online Store Website', 'niche' => 'e-commerce', 'keyword' => 'online store website'],
+        ['slug' => 'education-website', 'title' => 'Modern Education & Training Center Website', 'niche' => 'education and training', 'keyword' => 'education website'],
+        ['slug' => 'marketing-landing-page', 'title' => 'High-Converting Marketing Landing Page', 'niche' => 'digital marketing', 'keyword' => 'marketing landing page'],
+        ['slug' => 'dental-website', 'title' => 'Dental Practice Website That Builds Trust', 'niche' => 'dental and healthcare', 'keyword' => 'dental website'],
+        ['slug' => 'gym-website', 'title' => 'Professional Gym & Fitness Website', 'niche' => 'gym and fitness', 'keyword' => 'gym website'],
+        ['slug' => 'law-firm-website', 'title' => 'Law Firm Website That Wins Clients', 'niche' => 'legal services', 'keyword' => 'law firm website'],
+        ['slug' => 'hotel-website', 'title' => 'Hotel & Resort Website with Online Booking', 'niche' => 'hospitality and travel', 'keyword' => 'hotel website'],
     ];
 
     public function topics(): array
@@ -35,15 +35,15 @@ class LandingPageContentService
 
     public function metaDescription(string $title, string $niche, string $keyword): string
     {
-        return "{$title} — Giải pháp {$keyword} cho ngành {$niche}. Thiết kế đẹp, tối ưu SEO, triển khai nhanh, giá cạnh tranh.";
+        return "{$title} — A {$keyword} built for {$niche}. Clean design, SEO-ready, fast launch, and pricing that makes sense.";
     }
 
     public function intro(string $niche, string $keyword): string
     {
         return implode("\n\n", [
-            "Trong bối cảnh cạnh tranh ngày càng gay gắt, việc sở hữu một {$keyword} chuyên nghiệp không còn là lựa chọn mà đã trở thành yêu cầu bắt buộc đối với mọi doanh nghiệp trong lĩnh vực {$niche}. Khách hàng hiện đại tìm kiếm thông tin trực tuyến trước khi quyết định mua dịch vụ, và doanh nghiệp nào xuất hiện đầu tiên với hình ảnh uy tín sẽ giành được lợi thế lớn.",
-            "Một website được thiết kế bài bản giúp bạn xây dựng thương hiệu, tăng độ tin cậy và tạo kênh bán hàng hoạt động 24/7. Thay vì đầu tư hàng chục triệu cho agency truyền thống, bạn có thể chọn giải pháp theme website chất lượng cao với chi phí hợp lý, triển khai trong thời gian ngắn và dễ dàng tùy chỉnh theo nhu cầu riêng.",
-            "Bài viết này phân tích chi tiết lý do vì sao {$keyword} là khoản đầu tư thông minh, các thành phần cần có để trang web hiệu quả, và cách lựa chọn gói giải pháp phù hợp ngân sách cũng như mục tiêu kinh doanh của bạn trong ngành {$niche}.",
+            "In a crowded market, a professional {$keyword} isn't a nice-to-have — it's how customers find you, trust you, and choose you over the competition. If you're in {$niche}, your website is working for you 24/7, even when you're off the clock.",
+            "A well-built site helps you look legit, answer questions before prospects call, and turn traffic into leads and sales. Instead of dropping tens of thousands on a custom agency build, you can launch a proven theme fast, customize it to your brand, and start getting results this week.",
+            "In this guide, we'll break down why a {$keyword} is one of the smartest investments you can make, what every high-performing page needs, and how to pick the right package for your goals and budget in {$niche}.",
         ]);
     }
 
@@ -51,40 +51,40 @@ class LandingPageContentService
     {
         $topics = [
             [
-                'heading' => 'Tầm quan trọng của website trong kỷ nguyên số',
+                'heading' => 'Why your website matters more than ever',
                 'points' => [
-                    "Ngành {$niche} đang chứng kiến sự chuyển dịch mạnh mẽ sang kênh trực tuyến. Khách hàng so sánh giá, đọc đánh giá và đặt lịch hẹn ngay trên điện thoại. Nếu doanh nghiệp của bạn chưa có {$keyword}, bạn đang mất đi một lượng khách hàng tiềm năng đáng kể mỗi ngày.",
-                    'Website hoạt động như văn phòng ảo mở cửa 24 giờ. Khách có thể tìm hiểu dịch vụ, xem bảng giá, liên hệ qua form hoặc chat vào bất kỳ lúc nào — kể cả ngoài giờ làm việc. Điều này đặc biệt quan trọng với các doanh nghiệp nhỏ không có đội ngũ chăm sóc khách hàng lớn.',
-                    'Google và các công cụ tìm kiếm ưu tiên website có cấu trúc rõ ràng, tốc độ tải nhanh và nội dung chất lượng. Khi bạn đầu tư đúng cách cho SEO ngay từ đầu, chi phí thu hút khách hàng mới sẽ giảm dần theo thời gian so với việc chỉ chạy quảng cáo trả phí.',
-                    'Thương hiệu được nhận diện qua giao diện nhất quán: màu sắc, typography, hình ảnh chuyên nghiệp. Một {$keyword} được thiết kế tốt truyền tải thông điệp rằng bạn coi trọng chất lượng — điều khách hàng ngành '.$niche.' rất quan tâm khi ra quyết định.',
-                    'Dữ liệu hành vi người dùng từ website giúp bạn hiểu khách hàng hơn: trang nào được xem nhiều, form nào có tỷ lệ chuyển đổi cao, nguồn traffic đến từ đâu. Những insight này là nền tảng để tối ưu marketing và cải thiện dịch vụ.',
+                    "{$niche} is moving online fast. Your customers compare options, read reviews, and book appointments from their phones. If you don't have a solid {$keyword}, you're leaving money on the table every single day.",
+                    "Think of your website as a storefront that never closes. Visitors can browse services, check pricing, fill out a form, or start a chat anytime — nights, weekends, holidays included. That's huge if you're a small team without a full-time sales staff.",
+                    'Google rewards sites that load fast, read clearly, and deliver real value. Nail SEO early and your cost to acquire customers drops over time — instead of relying only on paid ads that stop the moment you pause spend.',
+                    'Your brand shows up in every detail: colors, typography, photography, messaging. A polished {$keyword} signals quality — and in '.$niche.', that trust factor drives the decision to buy.',
+                    "Analytics tell you what's working: top pages, best-converting forms, traffic sources. Those insights fuel smarter marketing and better service — not guesswork.",
                 ],
             ],
             [
-                'heading' => 'Các thành phần website hiệu quả cần có',
+                'heading' => 'What a high-converting website includes',
                 'points' => [
-                    'Trang chủ cần headline rõ ràng nêu lợi ích cốt lõi, kèm call-to-action nổi bật. Khách truy cập chỉ dành vài giây để quyết định ở lại hay rời đi — thiết kế phải truyền tải giá trị ngay lập tức.',
-                    "Trang dịch vụ/sản phẩm trình bày chi tiết từng hạng mục với hình ảnh chất lượng cao, mô tả lợi ích cụ thể và giá minh bạch. Ngành {$niche} thường cần gallery, bảng giá hoặc catalog để khách dễ so sánh.",
-                    'Trang giới thiệu kể câu chuyện thương hiệu: lịch sử, đội ngũ, chứng chỉ, giải thưởng. Yếu tố con người và uy tín là đòn bẩy quan trọng để chuyển đổi khách hàng mới thành khách hàng trung thành.',
-                    'Form liên hệ và tích hợp chat (Zalo, Messenger, WhatsApp) giảm rào cản liên lạc. Khách hàng ngày nay muốn phản hồi nhanh — một form đơn giản hoặc nút chat có thể tăng tỷ lệ chuyển đổi đáng kể.',
-                    'Blog hoặc mục tin tức giúp cập nhật nội dung thường xuyên, cải thiện SEO và thể hiện chuyên môn. Mỗi bài viết hữu ích là cơ hội xuất hiện trên Google với từ khóa liên quan đến '.$keyword.'.',
-                    'Tối ưu mobile-first là bắt buộc: hơn 70% lượt truy cập từ điện thoại. Giao diện responsive, nút bấm đủ lớn và form dễ điền trên màn hình nhỏ sẽ quyết định trải nghiệm khách hàng.',
+                    "Your homepage needs a clear headline with a core benefit and a bold call-to-action. You've got seconds to earn attention — lead with value, not fluff.",
+                    "Service and product pages should showcase what you offer with strong visuals, specific benefits, and transparent pricing. In {$niche}, galleries, menus, rate cards, or catalogs help buyers compare and commit faster.",
+                    "An About page builds credibility: your story, team, credentials, awards. People buy from people — especially when they're choosing a provider for the first time.",
+                    "Contact forms and chat (Messenger, WhatsApp, SMS) remove friction. Today's buyers expect fast replies — a simple form or chat button can lift conversions noticeably.",
+                    'A blog or news section keeps content fresh, boosts SEO, and positions you as the expert. Every helpful article is another chance to rank for keywords tied to your '.$keyword.'.',
+                    "Mobile-first isn't optional — most traffic is on phones. Responsive layout, thumb-friendly buttons, and easy forms on small screens directly impact revenue.",
                 ],
             ],
             [
-                'heading' => 'Lựa chọn giải pháp và triển khai nhanh',
+                'heading' => 'Pick the right solution and launch fast',
                 'points' => [
-                    'Thay vì xây dựng từ đầu với chi phí cao và thời gian dài, theme website chuyên biệt cho từng ngành là lựa chọn thông minh. Bạn có sẵn layout đã được thiết kế, test trên nhiều thiết bị và tối ưu cho chuyển đổi.',
-                    'Quy trình triển khai gọn: chọn theme phù hợp → cung cấp logo, hình ảnh, nội dung → đội ngũ cài đặt và tùy chỉnh → bàn giao kèm hướng dẫn quản trị. Toàn bộ có thể hoàn thành trong 24–48 giờ thay vì vài tuần.',
-                    'Chi phí theme một lần thấp hơn nhiều so với thuê agency thiết kế riêng. Bạn vẫn sở hữu website, không phụ thuộc nền tảng thuê bao hàng tháng với tính năng hạn chế như các dịch vụ landing page đơn giản.',
-                    'Sau khi ra mắt, bạn có thể tích hợp thêm: Google Analytics, pixel quảng cáo, email marketing, CRM. Nền tảng website linh hoạt cho phép mở rộng theo giai đoạn phát triển kinh doanh.',
-                    "Đầu tư {$keyword} ngay hôm nay là bước đi chiến lược để doanh nghiệp {$niche} của bạn cạnh tranh hiệu quả, xây dựng niềm tin và tạo nguồn khách hàng bền vững. Hãy chọn giải pháp phù hợp ngân sách và bắt đầu xuất hiện chuyên nghiệp trên không gian số.",
+                    'Building from scratch is slow and expensive. Industry-specific themes give you layouts that are already tested for conversions across devices — so you skip months of trial and error.',
+                    'A smart rollout looks like this: pick your theme → add logo, photos, and copy → we configure and customize → you get keys to the kingdom with a simple admin guide. Done in 24–48 hours, not weeks.',
+                    'A one-time theme purchase beats endless monthly platform fees with locked features. You own the site. You control the stack. You scale on your timeline.',
+                    'After launch, plug in Google Analytics, ad pixels, email tools, and CRM as you grow. A flexible site grows with your business — not against it.',
+                    "Investing in a {$keyword} today puts your {$niche} business in the game: more visibility, more trust, more customers. Choose the package that fits your budget and show up like a pro online.",
                 ],
             ],
         ];
 
         $section = $topics[$sectionIndex] ?? $topics[0];
-        $paragraphs = [$section['heading'] . '.'];
+        $paragraphs = [$section['heading'].'.'];
 
         foreach ($section['points'] as $point) {
             $paragraphs[] = $point;
@@ -116,10 +116,10 @@ class LandingPageContentService
         for ($i = 0; $i < 3; $i++) {
             $sections[] = [
                 'title' => match ($i) {
-                    0 => 'Vì sao cần ' . $keyword . ' ngay bây giờ?',
-                    1 => 'Thành phần website ' . $niche . ' chuẩn chuyên nghiệp',
-                    2 => 'Triển khai nhanh — chi phí hợp lý',
-                    default => 'Phần ' . ($i + 1),
+                    0 => 'Why you need a '.$keyword.' now',
+                    1 => 'What a pro '.$niche.' website includes',
+                    2 => 'Launch fast — without breaking the bank',
+                    default => 'Section '.($i + 1),
                 },
                 'content' => $this->sectionContent($niche, $keyword, $i),
                 'image' => $this->sectionImage($slug, $i + 1),
@@ -132,20 +132,20 @@ class LandingPageContentService
     public function popupSettings(string $niche): array
     {
         return [
-            'title' => 'Cookie Settings',
-            'message' => "We use cookies to improve your experience and show relevant offers for {$niche} services. By continuing, you agree to our cookie policy and personalized content.",
-            'button_text' => 'Yes, I accept',
+            'title' => 'Cookie Notice',
+            'message' => "We use cookies to improve your experience and show relevant offers for {$niche}. By continuing, you agree to our cookie policy and personalized content.",
+            'button_text' => 'Accept & Continue',
         ];
     }
 
     private function fillerParagraph(string $niche, string $keyword): string
     {
         $templates = [
-            "Nhiều chủ doanh nghiệp {$niche} ban đầu e ngại chi phí, nhưng thực tế một {$keyword} chất lượng thường hoàn vốn chỉ sau vài đơn hàng hoặc hợp đồng dịch vụ đầu tiên nhờ khả năng tiếp cận khách hàng mới liên tục.",
-            "Đối thủ cạnh tranh trực tiếp trong ngành {$niche} đã và đang đầu tư mạnh vào kênh online. Việc chậm trễ có thể khiến thương hiệu của bạn bị lu mờ, đặc biệt khi khách hàng tìm kiếm trên Google với các từ khóa liên quan đến {$keyword}.",
-            'Trải nghiệm người dùng mượt mà — tốc độ tải nhanh, menu rõ ràng, thông tin liên hệ dễ tìm — là yếu tố then chốt giữ chân khách và khuyến khích họ hành động: gọi điện, đặt lịch, hoặc mua hàng.',
-            "Xu hướng tiêu dùng ngành {$niche} cho thấy khách hàng ưu tiên thương hiệu minh bạch, có đánh giá thực tế và kênh liên lạc đa dạng. Website là nơi tập trung tất cả yếu tố đó một cách chuyên nghiệp.",
-            "Khi triển khai {$keyword}, bạn nên chuẩn bị bộ nội dung cơ bản: giới thiệu dịch vụ, bảng giá, hình ảnh thực tế và thông tin liên hệ. Nền tảng theme giúp bạn trình bày những nội dung này một cách hấp dẫn mà không cần kỹ năng lập trình.",
+            "A lot of {$niche} owners worry about cost upfront — but a solid {$keyword} often pays for itself after the first few bookings or sales because it keeps bringing in new customers.",
+            "Your competitors in {$niche} are already investing online. Wait too long and you'll get harder to find — especially when buyers search Google for {$keyword} near them.",
+            'Speed matters: fast load times, clear navigation, and obvious contact info keep visitors engaged and nudge them to act — call, book, or buy.',
+            "Today's {$niche} customers want transparency, real reviews, and easy ways to reach you. Your website is where all of that comes together professionally.",
+            "When you launch a {$keyword}, start with the basics: services, pricing, real photos, and contact details. A proven theme presents it all beautifully — no coding required.",
         ];
 
         return $templates[array_rand($templates)];
