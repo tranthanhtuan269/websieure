@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\Account\AffiliateController as AccountAffiliateController;
 use App\Http\Controllers\Account\DashboardController as AccountDashboardController;
@@ -14,8 +15,12 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PayoutRequestController;
+use App\Http\Controllers\Admin\LandingPageController as AdminLandingPageController;
+use App\Http\Controllers\Admin\LandingPageGeneratorController;
 use App\Http\Controllers\Admin\ThemeController as AdminThemeController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/lp/{landingPage}', [LandingPageController::class, 'show'])->name('landing-pages.show');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
@@ -50,6 +55,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
     Route::resource('themes', AdminThemeController::class)->except(['show']);
+    Route::get('landing-pages/generator', [LandingPageGeneratorController::class, 'create'])->name('landing-pages.generator');
+    Route::post('landing-pages/generator/start', [LandingPageGeneratorController::class, 'start'])->name('landing-pages.generator.start');
+    Route::post('landing-pages/generator/{generation}/step/{step}', [LandingPageGeneratorController::class, 'runStep'])->name('landing-pages.generator.step');
+    Route::get('landing-pages/generator/{generation}/status', [LandingPageGeneratorController::class, 'status'])->name('landing-pages.generator.status');
+    Route::get('landing-pages/generator/{generation}/preview/{type}', [LandingPageGeneratorController::class, 'preview'])->name('landing-pages.generator.preview');
+    Route::get('landing-pages/generator/{generation}/images/{filename}', [LandingPageGeneratorController::class, 'previewImage'])->name('landing-pages.generator.preview.image');
+    Route::post('landing-pages/generator/{generation}/deploy', [LandingPageGeneratorController::class, 'deploy'])->name('landing-pages.generator.deploy');
+    Route::get('landing-pages/generator/{generation}/download', [LandingPageGeneratorController::class, 'download'])->name('landing-pages.generator.download');
+    Route::resource('landing-pages', AdminLandingPageController::class)->except(['show']);
+    Route::post('landing-pages/export', [AdminLandingPageController::class, 'exportPackage'])->name('landing-pages.export');
+    Route::get('landing-pages/export/download', [AdminLandingPageController::class, 'downloadExport'])->name('landing-pages.export.download');
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}/edit', [AdminOrderController::class, 'edit'])->name('orders.edit');
     Route::put('orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');

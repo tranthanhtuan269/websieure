@@ -14,6 +14,7 @@
         <a href="{{ route('admin.dashboard') }}" @class(['active' => request()->routeIs('admin.dashboard')])>Dashboard</a>
         <a href="{{ route('admin.categories.index') }}" @class(['active' => request()->routeIs('admin.categories.*')])>Chủ đề</a>
         <a href="{{ route('admin.themes.index') }}" @class(['active' => request()->routeIs('admin.themes.*')])>Themes</a>
+        <a href="{{ route('admin.landing-pages.index') }}" @class(['active' => request()->routeIs('admin.landing-pages.*')])>Landing pages</a>
         <a href="{{ route('admin.orders.index') }}" @class(['active' => request()->routeIs('admin.orders.*')])>Đơn hàng</a>
         <a href="{{ route('admin.affiliates.index') }}" @class(['active' => request()->routeIs('admin.affiliates.*')])>Affiliate</a>
         <a href="{{ route('admin.commissions.index') }}" @class(['active' => request()->routeIs('admin.commissions.*')])>Hoa hồng</a>
@@ -31,5 +32,6 @@
         @yield('content')
     </main>
 </div>
+@stack('scripts')
 </body>
 </html>
