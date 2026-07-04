@@ -22,4 +22,8 @@ return [
         'locale' => env('LANDING_CONTENT_LOCALE', 'en-US'),
         'language' => env('LANDING_CONTENT_LANGUAGE', 'American English'),
     ],
+    'deploy' => [
+        'local_enabled' => env('LANDING_DEPLOY_LOCAL_ENABLED', false),
+        'local_base_path' => env('LANDING_DEPLOY_LOCAL_BASE', '/var/www'),
+    ],
 ];

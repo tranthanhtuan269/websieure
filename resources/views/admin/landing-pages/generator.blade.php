@@ -54,6 +54,18 @@
         <div id="downloadWrap" style="margin-top:1rem;" hidden>
             <a href="#" id="downloadBtn" class="btn btn-primary">Tải zip (3 landing page)</a>
         </div>
+        <div id="deployWrap" style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);" hidden>
+            <p style="margin:0 0 .85rem;font-weight:600;">Đẩy trực tiếp lên hosting</p>
+            <p style="margin:0 0 1rem;color:var(--muted);font-size:.9rem;line-height:1.55;">
+                Điền thông tin SFTP hoặc chọn deploy local (nếu server hỗ trợ). Mỗi lần deploy 1 trong 3 landing page.
+            </p>
+            @include('admin.landing-pages._deploy-form', [
+                'generationId' => 'pending',
+                'defaultPageType' => 'standard',
+                'deployLocalEnabled' => $deployLocalEnabled,
+                'variant' => 'light',
+            ])
+        </div>
     </div>
 </div>
 
@@ -71,7 +83,9 @@
     const downloadBtn = document.getElementById('downloadBtn');
     const previewWrap = document.getElementById('previewWrap');
     const previewLinks = document.getElementById('previewLinks');
+    const deployWrap = document.getElementById('deployWrap');
     const startBtn = document.getElementById('startBtn');
+    let deployForm = document.querySelector('.lp-deploy-form');
 
     const stepLabels = {
         crawl: 'Crawl ảnh affiliate',
@@ -108,8 +122,11 @@
             }
             downloadWrap.hidden = false;
             downloadBtn.href = data.download_url;
+            deployWrap.hidden = false;
+            deployForm = document.querySelector('.lp-deploy-form');
+            if (deployForm) deployForm.dataset.generationId = data.id;
             startBtn.disabled = false;
-            message.textContent = 'Đã tạo xong gói 3 landing page. Xem trước từng trang bên dưới, sau đó tải zip khi hài lòng.';
+            message.textContent = 'Đã tạo xong gói 3 landing page. Xem trước, deploy lên hosting, hoặc tải zip.';
         }
     }
 
@@ -136,6 +153,8 @@
         downloadWrap.hidden = true;
         previewWrap.hidden = true;
         previewLinks.innerHTML = '';
+        deployWrap.hidden = true;
+        if (deployForm) deployForm.dataset.generationId = 'pending';
         topic.hidden = true;
         bar.style.width = '0%';
         percent.textContent = '0%';

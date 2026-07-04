@@ -31,6 +31,18 @@ class LandingPagePackExportService
         return $this->generationsBase().'/lamwebre-pack-'.$generationId.'.zip';
     }
 
+    public function pageExportDirectory(string $generationId, string $pageType): ?string
+    {
+        $allowed = ['standard', 'compare', 'popup'];
+        if (! in_array($pageType, $allowed, true)) {
+            return null;
+        }
+
+        $directory = $this->packDirectory($generationId).'/'.$pageType;
+
+        return File::isDirectory($directory) ? $directory : null;
+    }
+
     public function exportPack(LandingPageGeneration $generation): string
     {
         $directory = $this->packDirectory($generation->id);
@@ -230,9 +242,19 @@ TXT;
             LandingPageType::Scroll => 'landing-pages.compare',
         };
 
+        $labels = [
+            'standard' => 'Landing chuẩn ~3000 từ (3 ảnh)',
+            'compare' => 'Bảng so sánh đối thủ',
+            'popup' => 'Landing popup Cookie Notice',
+        ];
+
         $viewData = [
             'page' => $page,
             'affiliateUrl' => $affiliateUrl,
+            'reviewMode' => true,
+            'reviewGeneration' => $generation,
+            'reviewPageType' => $type,
+            'reviewPageLabel' => $labels[$type] ?? $type,
         ];
 
         if ($type === 'compare') {

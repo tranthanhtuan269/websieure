@@ -61,6 +61,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('landing-pages/generator/{generation}/status', [LandingPageGeneratorController::class, 'status'])->name('landing-pages.generator.status');
     Route::get('landing-pages/generator/{generation}/preview/{type}', [LandingPageGeneratorController::class, 'preview'])->name('landing-pages.generator.preview');
     Route::get('landing-pages/generator/{generation}/images/{filename}', [LandingPageGeneratorController::class, 'previewImage'])->name('landing-pages.generator.preview.image');
+    Route::post('landing-pages/generator/{generation}/deploy', [LandingPageGeneratorController::class, 'deploy'])->name('landing-pages.generator.deploy');
     Route::get('landing-pages/generator/{generation}/download', [LandingPageGeneratorController::class, 'download'])->name('landing-pages.generator.download');
     Route::resource('landing-pages', AdminLandingPageController::class)->except(['show']);
     Route::post('landing-pages/export', [AdminLandingPageController::class, 'exportPackage'])->name('landing-pages.export');

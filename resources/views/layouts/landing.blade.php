@@ -17,6 +17,7 @@
     @stack('styles')
 </head>
 <body class="lp-body">
+@include('admin.landing-pages._review-bar')
 @yield('content')
 @stack('scripts')
 </body>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\LandingPageGeneration;
 use App\Services\LandingAiService;
+use App\Services\LandingPagePackDeployService;
 use App\Services\LandingPagePackExportService;
 use App\Services\LandingPagePackService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +21,7 @@ class LandingPageGeneratorController extends Controller
     public function __construct(
         private LandingPagePackService $packService,
         private LandingPagePackExportService $exportService,
+        private LandingPagePackDeployService $deployService,
         private LandingAiService $aiService,
     ) {}
 
@@ -27,6 +29,7 @@ class LandingPageGeneratorController extends Controller
     {
         return view('admin.landing-pages.generator', [
             'aiConfigured' => $this->aiService->isConfigured(),
+            'deployLocalEnabled' => config('landing.deploy.local_enabled'),
         ]);
     }
 
@@ -103,6 +106,31 @@ class LandingPageGeneratorController extends Controller
         }
 
         return response()->file($path);
+    }
+
+    public function deploy(Request $request, LandingPageGeneration $generation): JsonResponse
+    {
+        $data = $request->validate([
+            'page_type' => ['required', 'in:standard,compare,popup'],
+            'method' => ['required', 'in:sftp,local'],
+            'host' => ['required_if:method,sftp', 'nullable', 'string', 'max:255'],
+            'port' => ['nullable', 'integer', 'min:1', 'max:65535'],
+            'username' => ['required_if:method,sftp', 'nullable', 'string', 'max:120'],
+            'password' => ['required_if:method,sftp', 'nullable', 'string', 'max:255'],
+            'remote_path' => ['required', 'string', 'max:500'],
+            'site_url' => ['nullable', 'url', 'max:500'],
+        ]);
+
+        try {
+            $result = $this->deployService->deploy($generation, $data);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json($result);
     }
 
     /**
